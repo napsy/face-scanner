@@ -5,8 +5,10 @@ Deps:
 ```
 go get github.com/napsy/go-opencv
 go get github.com/disintegration/imaging
+go get github.com/gorilla/websocket
 ```
-Usage
+
+Usage:
 
 ```
 ./face-scanner src-dir dest-dir

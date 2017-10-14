@@ -24,6 +24,7 @@ var WorkerN = 1
 
 func drawFace(src image.Image, rect image.Rectangle) image.Image {
 	canvas := imaging.Crop(src, rect)
+	canvas = imaging.Thumbnail(canvas, 100, 100, imaging.Lanczos)
 	return canvas
 }
 

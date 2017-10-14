@@ -9,7 +9,6 @@ import (
 	"image/png"
 	"log"
 	"os"
-	"sync"
 
 	"faces"
 )
@@ -39,22 +38,25 @@ func saveFace(filename string, img image.Image) {
 }
 
 func main() {
+	flagWeb := flag.Bool("web", false, "show faces on web page localhost:4000")
 	flag.Parse()
-	result := &sync.Map{}
 	i := 0
-	faces.ScanDir(flag.Arg(0), true, func(filename string, faces []image.Image, rects []image.Rectangle) {
+	imgChan := make(chan []interface{}, 1)
+	go faces.ScanDir(flag.Arg(0), true, func(filename string, faces []image.Image, rects []image.Rectangle) {
 		fmt.Printf("image %s has %d faces in it\n", filename, len(rects))
+		imgs := []string{}
 		for _, face := range faces {
-			saveFace(fmt.Sprintf("%s/face_%d.png", flag.Arg(1), i), face)
-			i++
+			if *flagWeb {
+				img := face2base64(face)
+				imgs = append(imgs, img)
+			} else {
+				saveFace(fmt.Sprintf("%s/face_%d", flag.Arg(1), i), face)
+				i++
+			}
 		}
-		result.Store(filename, faces)
+		if *flagWeb {
+			imgChan <- []interface{}{filename, imgs}
+		}
 	})
-}
-
-var exitChan = make(chan bool, 1)
-
-func showGui() {
-	go serveHTTP()
-	<-exitChan
+	serveHTTP(imgChan)
 }

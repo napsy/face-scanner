@@ -1,0 +1,31 @@
+<html>
+	</head>
+
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
+	<script src="/static/jquery-3.2.1.min.js"></script>	
+	<script>
+$(function() {
+	var s = new WebSocket("ws://localhost:4000/ws");
+	s.onmessage = function(event) {
+		console.log('got message');
+		var msg = JSON.parse(event.data);
+		console.log(msg);
+		switch(msg.type) {
+			case "face":
+				$("#faces").append('<a href="file://'+msg.filename+'">'+msg.filename+'</a><br>');
+				for (var img in msg.data) {
+					$("#faces").append('<img src="data:image/png;base64,'+msg.data[img]+'">');
+				}
+				$("#faces").append('<br>');
+				break;
+		}
+	}
+});
+	</script>
+	</head>
+	<body>
+		<h1>Face Scanner</h1>
+		<hr>
+		<div id="faces"></div>
+	</body>
+</html>
