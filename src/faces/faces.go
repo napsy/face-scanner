@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/disintegration/imaging"
-	"github.com/go-opencv/go-opencv/opencv"
+	"github.com/napsy/go-opencv/opencv"
 )
 
 var cascade *opencv.HaarCascade
